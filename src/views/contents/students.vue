@@ -6,6 +6,17 @@
 </template>
 <script>
     export default {
+        mounted () {
+            this.$axios.get('http://localhost:3000/students/getAll').then(r=>{
+                if(r.data.message === 'success'){
+                    let data = r.data.data
+                    data.forEach(o=>{
+                        o.gender === 0?o.gender='男':o.gender='女'
+                    })
+                    this.data1 = data
+                }
+            })
+        },
         data () {
             return {
                 columns1: [
@@ -23,11 +34,11 @@
                     },
                     {
                         title:'楼号',
-                        key:'dormId'
+                        key:'dorm_id'
                     },
                     {
                         title:'房间号',
-                        key:'roomId'
+                        key:'room'
                     },
                     {
                         title:'操作',

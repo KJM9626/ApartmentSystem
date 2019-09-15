@@ -5,17 +5,34 @@
     </div>
 </template>
 <script>
+    let map = ['厕所','电器','门具','其他']
     export default {
+        mounted () {
+            this.$axios.get('http://localhost:3000/maintain/getAll').then(r=>{
+                if(r.data.message === 'success'){
+                    let data = r.data.data
+                    data.forEach(o=>{
+                        o.type = map[o.type]
+                        o.status === 0?o.status='等待维修':o.status='维修完毕'
+                    })
+                    this.data1 = data
+                }
+            })
+        },
         data () {
             return {
                 columns1: [
                     {
+                        title:'维修ID',
+                        key:'id'
+                    },
+                    {
                         title: '楼号',
-                        key: 'dormId'
+                        key: 'dorm_id'
                     },
                     {
                         title: '房间号',
-                        key: 'roomId'
+                        key: 'name'
                     },
                     {
                         title: '维修类型',
@@ -38,6 +55,9 @@
                                     props:{
                                         type:'success',
                                         size:'small'
+                                    },
+                                    style:{
+                                        marginRight:'10px'
                                     },
                                     on:{
                                         click:()=>{

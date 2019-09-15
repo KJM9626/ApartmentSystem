@@ -6,30 +6,54 @@
 </template>
 <script>
     export default {
+        mounted () {
+            this.$axios.get('http://localhost:3000/room/getAll').then(r=>{
+                if(r.data.message === 'success'){
+                    let data = r.data.data
+                    data.forEach(o=>{
+                        
+                    })
+                    this.data1 = data
+                }
+            })
+        },
         data () {
             return {
                 columns1: [
                     {
+                        title : '房间ID',
+                        key:'id'
+                    },
+                    {
                         title: '房间号',
-                        key: 'roomId'
+                        key: 'name'
                     },
                     {
                         title: '楼号',
-                        key: 'dormId'
+                        key: 'dorm_id'
                     },
                     {
                         title: '最大容纳数量',
                         key: 'max'
                     },
                     {
-                        title:'所住学生信息',
-                        key:'studentsInfo'
-                    },
-                    {
                         title:'操作',
                         key:'op',
                         render: (h, params)=> {
-                            return h('div',[
+                            return h('div',[h('Button',{
+                                    props:{
+                                        type:'primary',
+                                        size:'small',
+                                    },
+                                    style:{
+                                        marginRight:'10px'
+                                    },
+                                    on:{
+                                        click:()=>{
+                                            // define action here.
+                                        }
+                                    }
+                                },'查看所住学生'),
                                 h('Button',{
                                     props:{
                                         type:'error',
