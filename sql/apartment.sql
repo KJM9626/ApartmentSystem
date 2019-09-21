@@ -11,7 +11,7 @@
  Target Server Version : 50724
  File Encoding         : 65001
 
- Date: 15/09/2019 22:39:47
+ Date: 22/09/2019 00:24:22
 */
 
 SET NAMES utf8mb4;
@@ -42,20 +42,21 @@ COMMIT;
 DROP TABLE IF EXISTS `dorm`;
 CREATE TABLE `dorm` (
   `id` tinyint(5) NOT NULL AUTO_INCREMENT,
-  `population` int(4) NOT NULL,
-  `empty_room` int(3) NOT NULL,
   `room` int(3) NOT NULL,
   `type` tinyint(1) DEFAULT NULL COMMENT '0为本科生 1为研究生',
   `admin_id` tinyint(5) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `admin_id` (`admin_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of dorm
 -- ----------------------------
 BEGIN;
-INSERT INTO `dorm` VALUES (1, 200, 2, 20, 0, 1);
+INSERT INTO `dorm` VALUES (1, 20, 0, 1);
+INSERT INTO `dorm` VALUES (2, 12, 1, 1);
+INSERT INTO `dorm` VALUES (3, 123, 0, 1);
+INSERT INTO `dorm` VALUES (4, 123123, 0, 1);
 COMMIT;
 
 -- ----------------------------
@@ -130,7 +131,7 @@ DROP TABLE IF EXISTS `visitor`;
 CREATE TABLE `visitor` (
   `name` varchar(20) NOT NULL,
   `gender` tinyint(1) NOT NULL,
-  `idno` int(18) NOT NULL,
+  `idno` bigint(18) NOT NULL,
   `dorm_id` tinyint(5) NOT NULL,
   `room_id` tinyint(5) NOT NULL,
   `reason` varchar(100) NOT NULL,
@@ -138,5 +139,12 @@ CREATE TABLE `visitor` (
   `id` tinyint(5) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of visitor
+-- ----------------------------
+BEGIN;
+INSERT INTO `visitor` VALUES ('林美美', 1, 510302199302100021, 1, 1, '找朋友', 0, 1);
+COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
