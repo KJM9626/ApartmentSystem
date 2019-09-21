@@ -21,4 +21,18 @@ router.get('/getAll',async(ctx,next)=>{
     })
     ctx.body = back
 })
+
+router.post('/add',async(ctx,next)=>{
+  let req = ctx.request.body // req: name,gender,dorm_id,room_id
+  let back = 'fail'
+  await knex('student').insert({
+    name:req.name,
+    gender:req.gender,
+    dorm_id:req.dorm_id,
+    room_id:req.room_id
+  }).then(e=>{
+    back = 'success'
+  })
+  ctx.body = back
+})
 module.exports = router
