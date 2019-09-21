@@ -19,6 +19,7 @@
                 <MenuItem name="3" style="font-size:18px;" to="/home/rooms"><Icon type="ios-create" size="20"></Icon>房间管理</MenuItem>
                 <MenuItem name="4" style="font-size:18px;" to="/home/maintain"><Icon type="ios-hammer" size="20"></Icon>维修管理</MenuItem>
                 <MenuItem name="5" style="font-size:18px;" to="/home/visitor"><Icon type="ios-contacts" size="20"></Icon>访客管理</MenuItem>
+                <MenuItem name="6" style="font-size:18px;" to="/home/admin"><Icon type="ios-contacts" size="20"></Icon>管理员管理</MenuItem>
             </Menu>
         </Sider>
         <Layout :style="{marginLeft: '200px'}">

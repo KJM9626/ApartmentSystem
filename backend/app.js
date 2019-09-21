@@ -11,6 +11,8 @@ const dorm = require('./routes/dorm')
 const students = require('./routes/students')
 const room = require('./routes/room')
 const maintain = require('./routes/maintain')
+const visitor = require('./routes/visitor')
+const admin = require('./routes/admin')
 
 // error handler
 onerror(app)
@@ -41,6 +43,8 @@ app.use(dorm.routes(), dorm.allowedMethods())
 app.use(students.routes(),students.allowedMethods())
 app.use(room.routes(),room.allowedMethods())
 app.use(maintain.routes(),maintain.allowedMethods())
+app.use(visitor.routes(),visitor.allowedMethods())
+app.use(admin.routes(),admin.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

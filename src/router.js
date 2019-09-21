@@ -7,6 +7,7 @@ import students from './views/contents/students.vue'
 import rooms from './views/contents/rooms.vue'
 import maintain from './views/contents/maintain.vue'
 import visitor from './views/contents/visitor.vue'
+import admin from './views/contents/admin.vue'
 
 
 Vue.use(Router)
@@ -42,6 +43,10 @@ export default new Router({
         path:'/home/visitor',
         name:'visitor',
         component:visitor
+      },{
+        path:'/home/admin',
+        name:'admin',
+        component:admin
       }]
     },
   ]

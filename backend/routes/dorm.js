@@ -9,7 +9,7 @@ router.get('/getAll',async(ctx,next)=>{
     data:[]
   }
   await knex('dorm').join('admin','dorm.admin_id','=','admin.id')
-  .select('dorm.id as id','population','empty_room','room','type','admin.id as adminid','name','gender','tel').then(e=>{
+  .select('dorm.id as id','room','type','admin.id as adminid','name','gender','tel').then(e=>{
     if(e.length === 0){
       back.message = 'empty'
     }
@@ -17,6 +17,19 @@ router.get('/getAll',async(ctx,next)=>{
       back.message = 'success'
       back.data = e
     }
+  })
+  ctx.body = back
+})
+
+router.post('/add',async(ctx,next)=>{
+  let req = ctx.request.body // req: room, type, admin_id
+  let back = 'fail'
+  await knex('dorm').insert({
+    room:req.room,
+    type:req.type,
+    admin_id:req.admin_id
+  }).then(e=>{
+    back = 'success'
   })
   ctx.body = back
 })
