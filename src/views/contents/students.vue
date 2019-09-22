@@ -6,6 +6,7 @@
 </template>
 <script>
     export default {
+        inject:['reload'],
         mounted () {
             this.$axios.get('http://localhost:3000/students/getAll').then(r=>{
                 if(r.data.message === 'success'){
@@ -52,7 +53,20 @@
                                     },
                                     on:{
                                         click:()=>{
-                                            // define action here.
+                                            this.$Modal.confirm({
+                                                title:'删除确认',
+                                                content:'<p>删除后不可恢复，确定要删除吗？</p>',
+                                                onOk:()=>{
+                                                    this.$axios.post('http://localhost:3000/students/delete',{
+                                                        id:this.data1[params.index].id
+                                                    }).then(r=>{
+                                                        if(r.data === 'success'){
+                                                            this.$Message.success('删除成功')
+                                                            this.reload()
+                                                        }
+                                                    })
+                                                },
+                                            })
                                         }
                                     }
                                 },'删除')

@@ -34,4 +34,10 @@ router.post('/add',async(ctx,next)=>{
   ctx.body = back
 })
 
+router.post('/delete',async(ctx,next)=>{
+  let req = ctx.request.body // req: id
+  let back = 'fail'
+  await knex('dorm').where('id',req.id).del().then(e=>{back = 'success'})
+  ctx.body = back
+})
 module.exports = router

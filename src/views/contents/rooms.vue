@@ -1,5 +1,8 @@
 <template>
     <div align="left">
+        <Modal v-model="detailModal" title="所住学生">
+            <Table :columns="columns2" :data="data2"></Table>
+        </Modal>
         <Button type="primary" style="align:left;margin-bottom:15px;">新增房间</Button>
         <Table :columns="columns1" :data="data1"></Table>
     </div>
@@ -19,6 +22,21 @@
         },
         data () {
             return {
+                detailModal:false,
+                columns2: [
+                    {
+                        title: '学号',
+                        key: 'id'
+                    },
+                    {
+                        title: '姓名',
+                        key: 'name'
+                    },
+                    {
+                        title: '性别',
+                        key: 'gender'
+                    },
+                ],
                 columns1: [
                     {
                         title : '房间ID',
@@ -49,8 +67,20 @@
                                         marginRight:'10px'
                                     },
                                     on:{
-                                        click:()=>{
-                                            // define action here.
+                                        click:async ()=>{
+                                            //console.log(params.row)
+                                            await this.$axios.get('http://localhost:3000/students/getByRoomId/'+params.row.id).then(r=>{
+                                                if(r.data.message === 'fail') this.$Message.error('获取失败')
+                                                else if(r.data.message === 'empty') this.$Message.error('这间宿舍还未入住学生')
+                                                else{
+                                                    let data = r.data.data
+                                                    data.forEach(e=>{
+                                                        e.gender === 0?e.gender = '男':e.gender='女'
+                                                    })
+                                                    this.data2 = data
+                                                    this.detailModal = true
+                                                }
+                                            })
                                         }
                                     }
                                 },'查看所住学生'),
@@ -61,7 +91,20 @@
                                     },
                                     on:{
                                         click:()=>{
-                                            // define action here.
+                                            this.$Modal.confirm({
+                                                title:'删除确认',
+                                                content:'<p>删除后不可恢复，确定要删除吗？</p>',
+                                                onOk:()=>{
+                                                    this.$axios.post('http://localhost:3000/room/delete',{
+                                                        id:this.data1[params.index].id
+                                                    }).then(r=>{
+                                                        if(r.data === 'success'){
+                                                            this.$Message.success('删除成功')
+                                                            this.reload()
+                                                        }
+                                                    })
+                                                },
+                                            })
                                         }
                                     }
                                 },'删除')
@@ -69,7 +112,8 @@
                         }
                     }
                 ],
-                data1: []
+                data1: [],
+                data2: []
             }
         }
     }
