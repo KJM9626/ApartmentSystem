@@ -1,6 +1,19 @@
 <template>
     <div align="left">
-        <Button type="primary" style="align:left;margin-bottom:15px;">新增管理员</Button>
+        <Modal
+            v-model="addModal6"
+            title="新增管理员"
+            @on-ok="submit"
+            @on-cancel="addModal6 = false"
+            align="center">
+            <Input v-model="addInfo.id" placeholder="请输入管理员ID" style="width:200px"/><br>
+            <Input v-model="addInfo.name" placeholder="请输入姓名" style="width:200px"/><br>
+            <Select v-model="addInfo.gender" style="width:200px">
+                <Option v-for="item in genderList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select><br>
+            <Input v-model="addInfo.tel" placeholder="请输入电话号码" style="width:200px"/>
+        </Modal>
+        <Button type="primary" style="align:left;margin-bottom:15px;" @click="addModal6 = true">新增管理员</Button>
         <Table :columns="columns1" :data="data1"></Table>
     </div>
 </template>
@@ -19,8 +32,30 @@
                 }
             })
         },
+        methods: {
+            submit(){
+                
+            }
+        },
         data () {
             return {
+                genderList: [
+                    {
+                        value: 0,
+                        label: '男'
+                    },
+                    {
+                        value:1,
+                        label:'女'
+                    }
+                ],
+                addInfo:{
+                    id:null,
+                    name:null,
+                    gender:null,
+                    tel:null
+                },
+                addModal6:false,
                 columns1: [
                     {
                         title: '管理员ID',
