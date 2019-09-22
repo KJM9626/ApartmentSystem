@@ -53,7 +53,7 @@ router.get('/getByRoomId/:id',async(ctx,next)=>{
   ctx.body = back
 })
 
-<<<<<<< HEAD
+
 router.post('/changeStatus',async(ctx,next)=>{
   let req = ctx.request.body
   let back = 'fail'
@@ -70,8 +70,7 @@ router.post('/changeStatus',async(ctx,next)=>{
   })
   ctx.body = back
 })
-=======
->>>>>>> 79af7fc8a5625eb8936f4013ecca92d380a79f15
+
 router.post('/delete',async(ctx,next)=>{
   let req = ctx.request.body // req: id
   let back = 'fail'
