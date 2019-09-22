@@ -36,6 +36,20 @@
         },
         methods: {
             submit(){
+                this.$axios.post('http://localhost:3000/visitor/add',{
+                    name:this.addInfo.name,
+                    gender:this.addInfo.gender,
+                    idno:this.addInfo.idno,
+                    dorm_id:this.addInfo.dorm_id,
+                    room_name:this.addInfo.room_name,
+                    reason:this.addInfo.reason
+                }).then(r=>{
+                    console.log(r.data)
+                    if(r.data === 'success'){
+                        this.$Message.success('添加成功');
+                        this.reload()
+                    }
+                })
                 
             }
         },

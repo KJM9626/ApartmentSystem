@@ -34,6 +34,19 @@
         },
         methods: {
             submit(){
+                this.$axios.post('http://localhost:3000/maintain/add',{
+                    id:this.addInfo.id,
+                    dorm_id:this.addInfo.dorm_id,
+                    name:this.addInfo.name,
+                    type:this.addInfo.type,
+                    detail:this.addInfo.detail
+                }).then(r=>{
+                    console.log(r.data)
+                    if(r.data === 'success'){
+                        this.$Message.success('添加成功');
+                        this.reload()
+                    }
+                })
                 
             }
         },

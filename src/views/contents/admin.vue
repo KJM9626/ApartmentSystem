@@ -34,6 +34,18 @@
         },
         methods: {
             submit(){
+                this.$axios.post('http://localhost:3000/admin/add',{
+                    id:this.addInfo.id,
+                    name:this.addInfo.name,
+                    gender:this.addInfo.gender,
+                    tel:this.addInfo.tel
+                }).then(r=>{
+                    console.log(r.data)
+                    if(r.data === 'success'){
+                        this.$Message.success('添加成功');
+                        this.reload()
+                    }
+                })
                 
             }
         },
