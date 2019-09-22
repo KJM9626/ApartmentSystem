@@ -34,4 +34,28 @@ router.post('/add',async(ctx,next)=>{
   ctx.body = back
 })
 
+router.post('/changeStatus',async(ctx,next)=>{
+  let req = ctx.request.body
+  let back = 'fail'
+  let currentStatus = 0
+  let newStatus = 0
+  await knex('dorm').where('id',req.id).select('status').then(e=>{
+    currentStatus = e[0].status
+  })
+  currentStatus === 0?newStatus = 1:newStatus=0
+  await knex('dorm').where('id',req.id).update({
+    status:newStatus
+  }).then(e=>{
+    back = 'success'
+  })
+  ctx.body = back
+})
+router.post('/delete',async(ctx,next)=>{
+  let req = ctx.request.body // req: id
+  let back = 'fail'
+  await knex('dorm').where('id',req.id).del().then(e=>{back = 'success'})
+  ctx.body = back
+})
+
+
 module.exports = router

@@ -7,6 +7,7 @@
 <script>
     let map = ['厕所','电器','门具','其他']
     export default {
+        inject:['reload'],
         mounted () {
             this.$axios.get('http://localhost:3000/maintain/getAll').then(r=>{
                 if(r.data.message === 'success'){
@@ -61,7 +62,15 @@
                                     },
                                     on:{
                                         click:()=>{
-                                            // define action here.
+                                            this.$axios.post('http://localhost:3000/maintain/changeStatus',{
+                                                id:params.row.id
+                                            }).then(r=>{
+                                                if(r.data === 'success'){
+                                                    this.$Message.success('修改维修状态成功')
+                                                    this.reload()
+                                                }
+                                                else this.$Message.error('修改失败')
+                                            })
                                         }
                                     }
                                 },'修改状态')
@@ -72,7 +81,20 @@
                                     },
                                     on:{
                                         click:()=>{
-                                            // define action here.
+                                            this.$Modal.confirm({
+                                                title:'删除确认',
+                                                content:'<p>删除后不可恢复，确定要删除吗？</p>',
+                                                onOk:()=>{
+                                                    this.$axios.post('http://localhost:3000/maintain/delete',{
+                                                        id:this.data1[params.index].id
+                                                    }).then(r=>{
+                                                        if(r.data === 'success'){
+                                                            this.$Message.success('删除成功')
+                                                            this.reload()
+                                                        }
+                                                    })
+                                                },
+                                            })
                                         }
                                     }
                                 },'删除')])

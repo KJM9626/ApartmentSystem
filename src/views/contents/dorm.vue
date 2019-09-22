@@ -6,11 +6,11 @@
             @on-ok="submit"
             @on-cancel="addModal = false"
             align="center">
-            <Input v-model="addInfo.room" placeholder="请输入总房间数" style="width:200px"/><br>
-            <Select v-model="addInfo.type" style="width:200px">
+            <Input v-model="addInfo.room" placeholder="请输入总房间数" style="width:200px;margin:10px"/><br>
+            <Select v-model="addInfo.type" style="width:200px;margin:10px">
                 <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select><br>
-            <Select v-model="addInfo.admin_id" style="width:200px" placeholder="选择管理员">
+            <Select v-model="addInfo.admin_id" style="width:200px;margin:10px" placeholder="选择管理员">
                 <Option v-for="item in adminList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
         </Modal>
@@ -20,6 +20,7 @@
 </template>
 <script>
     export default {
+        inject:['reload'],
         mounted() {
             this.$axios.get('http://localhost:3000/dorm/getAll').then(r => {
                 if (r.data.message === 'success') {
@@ -53,6 +54,7 @@
                     console.log(r.data)
                     if(r.data === 'success'){
                         this.$Message.success('添加成功');
+                        this.reload()
                     }
                 })
             }
@@ -105,7 +107,20 @@
                                     },
                                     on:{
                                         click:()=>{
-                                            // define action here.
+                                            this.$Modal.confirm({
+                                                title:'删除确认',
+                                                content:'<p>删除后不可恢复，确定要删除吗？</p>',
+                                                onOk:()=>{
+                                                    this.$axios.post('http://localhost:3000/dorm/delete',{
+                                                        id:this.data1[params.index].id
+                                                    }).then(r=>{
+                                                        if(r.data === 'success'){
+                                                            this.$Message.success('删除成功')
+                                                            this.reload()
+                                                        }
+                                                    })
+                                                },
+                                            })
                                         }
                                     }
                                 },'删除')
