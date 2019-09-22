@@ -118,6 +118,9 @@
                                                             this.$Message.success('删除成功')
                                                             this.reload()
                                                         }
+                                                        else if(r.data === 'restrict'){
+                                                            this.$Message.error('该楼还有学生入住/还有房间/维修记录/访客记录，无法删除')
+                                                        }
                                                     })
                                                 },
                                             })

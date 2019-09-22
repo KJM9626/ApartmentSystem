@@ -6,15 +6,19 @@
             @on-ok="submit"
             @on-cancel="addModal2 = false"
             align="center">
-            <Input v-model="addInfo.id" placeholder="请输入学号" style="width:200px"/><br>
-            <Input v-model="addInfo.name" placeholder="请输入姓名" style="width:200px"/><br>
-            <Select v-model="addInfo.gender" style="width:200px">
+            <Input v-model="addInfo.id" placeholder="请输入学号" style="width:200px;margin:10px"/><br>
+            <Input v-model="addInfo.name" placeholder="请输入姓名" style="width:200px;margin:10px"/><br>
+            <Select v-model="addInfo.gender" style="width:200px;margin:10px" placeholder="请选择性别">
                 <Option v-for="item in genderList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select><br>
-            <Input v-model="addInfo.dorm_id" placeholder="请输入楼号" style="width:200px"/><br>
-            <Input v-model="addInfo.room" placeholder="请输入房间号" style="width:200px"/><br>
+            <Select v-model="addInfo.dorm_id" style="width:200px;margin:10px" placeholder="请选择楼号" @on-change="dormSelected">
+                <Option v-for="item in dormList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select><br>
+            <Select v-model="addInfo.room_id" style="width:200px;margin:10px" :disabled=roomDisable placeholder="请选择房间">
+                <Option v-for="item in roomList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select><br>
         </Modal>
-        <Button type="primary" style="align:left;margin-bottom:15px;" @click="addModal2 = true">新增学生</Button>
+        <Button type="primary" style="align:left;margin-bottom:15px;" @click="addStudent">新增学生</Button>
         <Table :columns="columns1" :data="data1"></Table>
     </div>
 </template>
@@ -22,7 +26,7 @@
     export default {
         inject:['reload'],
         mounted () {
-            this.$axios.get('http://localhost:3000/students/getAll').then(r=>{
+            this.$axios.get('http://localhost:3000/student/getAll').then(r=>{
                 if(r.data.message === 'success'){
                     let data = r.data.data
                     data.forEach(o=>{
@@ -33,13 +37,46 @@
             })
         },
         methods: {
+            dormSelected(){
+                this.roomDisable = true
+                this.roomList.length = 0
+                this.$axios.get('http://localhost:3000/room/getByDormId/'+this.addInfo.dorm_id).then(r=>{
+                    console.log(r.data)
+                    if(r.data.message === 'success'){
+                        let data = r.data.data
+                        data.forEach(e=>{
+                            this.roomList.push({label:e.name,value:e.id})
+                        })
+                        this.roomDisable = false
+                    }
+                    else if(r.data.message === 'empty'){
+                        this.$Message.error('这栋楼没有房间')
+                    }
+                    else{
+                        this.$Message.error('未知错误')
+                    }
+                })
+            },
+            addStudent(){
+                this.addModal2 = true
+                this.dormList.length = 0
+                this.$axios.get('http://localhost:3000/dorm/getAll').then(r=>{
+                    if(r.data.message === 'success'){
+                        let data = r.data.data
+                        data.forEach(e=>{
+                            this.dormList.push({label:e.id+'号楼',value:e.id})
+                        })
+                        this.addModal3 = true
+                    }
+                })
+            },
             submit(){
-                this.$axios.post('http://localhost:3000/students/add',{
+                this.$axios.post('http://localhost:3000/student/add',{
                     id:this.addInfo.id,
                     name:this.addInfo.name,
                     gender:this.addInfo.gender,
                     dorm_id:this.addInfo.dorm_id,
-                    room:this.addInfo.room
+                    room_id:this.addInfo.room_id
                 }).then(r=>{
                     console.log(r.data)
                     if(r.data === 'success'){
@@ -52,6 +89,9 @@
         },
         data () {
             return {
+                roomDisable:true,
+                dormList:[],
+                roomList:[],
                 genderList: [
                     {
                         value: 0,
@@ -67,7 +107,7 @@
                     name:null,
                     gender:null,
                     dorm_id:null,
-                    room:null
+                    room_id:null
                 },
                 addModal2:false,
                 columns1: [
@@ -107,7 +147,7 @@
                                                 title:'删除确认',
                                                 content:'<p>删除后不可恢复，确定要删除吗？</p>',
                                                 onOk:()=>{
-                                                    this.$axios.post('http://localhost:3000/students/delete',{
+                                                    this.$axios.post('http://localhost:3000/student/delete',{
                                                         id:this.data1[params.index].id
                                                     }).then(r=>{
                                                         if(r.data === 'success'){

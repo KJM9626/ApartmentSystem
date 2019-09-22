@@ -34,19 +34,18 @@ router.post('/add',async(ctx,next)=>{
   ctx.body = back
 })
 
-router.post('/changeStatus',async(ctx,next)=>{
-  let req = ctx.request.body
-  let back = 'fail'
-  let currentStatus = 0
-  let newStatus = 0
-  await knex('room').where('id',req.id).select('status').then(e=>{
-    currentStatus = e[0].status
-  })
-  currentStatus === 0?newStatus = 1:newStatus=0
-  await knex('room').where('id',req.id).update({
-    status:newStatus
-  }).then(e=>{
-    back = 'success'
+router.get('/getByDormId/:id',async(ctx,next)=>{
+  let id = ctx.params.id
+  let back = {
+    message:'fail',
+    data:[]
+  }
+  await knex('room').where('dorm_id',id).select('id','name').then(e=>{
+    if(e.length === 0) back.message = 'empty'
+    else{
+      back.message = 'success'
+      back.data = e
+    }
   })
   ctx.body = back
 })
@@ -54,7 +53,9 @@ router.post('/changeStatus',async(ctx,next)=>{
 router.post('/delete',async(ctx,next)=>{
   let req = ctx.request.body // req: id
   let back = 'fail'
-  await knex('room').where('id',req.id).del().then(e=>{back = 'success'})
+  await knex('room').where('id',req.id).del().then(e=>{back = 'success'}).catch(er=>{
+    back = 'restrict'
+  })
   ctx.body = back
 })
 module.exports = router

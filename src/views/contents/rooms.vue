@@ -9,32 +9,42 @@
             @on-ok="submit"
             @on-cancel="addModal3 = false"
             align="center">
-            <Input v-model="addInfo.id" placeholder="请输入房间ID" style="width:200px"/><br>
-            <Input v-model="addInfo.name" placeholder="请输入房间号" style="width:200px"/><br>
-            <Input v-model="addInfo.dorm_id" placeholder="请输入楼号" style="width:200px"/><br>
-            <Input v-model="addInfo.max" placeholder="请输入最大容纳数量" style="width:200px"/>
+            <Input v-model="addInfo.name" placeholder="请输入房间编号" style="width:200px"/><br>
+            <Select v-model="addInfo.dorm_id" style="width:200px;margin:10px" placeholder="请选择楼号">
+                <Option v-for="item in dormList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select><br>
+            <Input v-model="addInfo.max" placeholder="请输入最大容纳人数" style="width:200px"/>
         </Modal>
-        <Button type="primary" style="align:left;margin-bottom:15px;" @click="addModal3 = true">新增房间</Button>
+        <Button type="primary" style="align:left;margin-bottom:15px;" @click="addRoom">新增房间</Button>
         <Table :columns="columns1" :data="data1"></Table>
     </div>
 </template>
 <script>
     export default {
+        inject:['reload'],
         mounted () {
             this.$axios.get('http://localhost:3000/room/getAll').then(r=>{
                 if(r.data.message === 'success'){
                     let data = r.data.data
-                    data.forEach(o=>{
-                        
-                    })
                     this.data1 = data
                 }
             })
         },
         methods: {
+            addRoom(){
+                this.dormList.length = 0
+                this.$axios.get('http://localhost:3000/dorm/getAll').then(r=>{
+                    if(r.data.message === 'success'){
+                        let data = r.data.data
+                        data.forEach(e=>{
+                            this.dormList.push({label:e.id+'号楼',value:e.id})
+                        })
+                        this.addModal3 = true
+                    }
+                })
+            },
             submit(){
                 this.$axios.post('http://localhost:3000/room/add',{
-                    id:this.addInfo.id,
                     name:this.addInfo.name,
                     dorm_id:this.addInfo.dorm_id,
                     max:this.addInfo.max
@@ -50,6 +60,7 @@
         },
         data () {
             return {
+                dormList:[],
                 addInfo:{
                     id:null,
                     name:null,
@@ -104,7 +115,7 @@
                                     on:{
                                         click:async ()=>{
                                             //console.log(params.row)
-                                            await this.$axios.get('http://localhost:3000/students/getByRoomId/'+params.row.id).then(r=>{
+                                            await this.$axios.get('http://localhost:3000/student/getByRoomId/'+params.row.id).then(r=>{
                                                 if(r.data.message === 'fail') this.$Message.error('获取失败')
                                                 else if(r.data.message === 'empty') this.$Message.error('这间宿舍还未入住学生')
                                                 else{
@@ -136,6 +147,9 @@
                                                         if(r.data === 'success'){
                                                             this.$Message.success('删除成功')
                                                             this.reload()
+                                                        }
+                                                        else if(r.data === 'restrict'){
+                                                            this.$Message.error('该房间还有学生入住/维修记录/访客记录，无法删除')
                                                         }
                                                     })
                                                 },

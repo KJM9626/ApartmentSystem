@@ -54,7 +54,9 @@ router.get('/getAll',async(ctx,next)=>{
   router.post('/delete',async(ctx,next)=>{
     let req = ctx.request.body // req: id
     let back = 'fail'
-    await knex('admin').where('id',req.id).del().then(e=>{back = 'success'})
+    await knex('admin').where('id',req.id).del().then(e=>{back = 'success'}).catch(er=>{
+      back = 'restrict'
+    })
     ctx.body = back
   })
   module.exports = router

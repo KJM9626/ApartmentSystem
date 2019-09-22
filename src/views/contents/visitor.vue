@@ -6,16 +6,20 @@
             @on-ok="submit"
             @on-cancel="addModal5 = false"
             align="center">
-            <Input v-model="addInfo.name" placeholder="请输入访客姓名" style="width:200px"/><br>
-            <Select v-model="addInfo.gender" style="width:200px">
+            <Input v-model="addInfo.name" placeholder="请输入访客姓名" style="width:200px;margin:5px"/><br>
+            <Select v-model="addInfo.gender" style="width:200px;margin:5px" placeholder="性别">
                 <Option v-for="item in genderList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select><br>
-            <Input v-model="addInfo.idno" placeholder="请输入身份证号" style="width:200px"/><br>
-            <Input v-model="addInfo.dorm_id" placeholder="请输入访问楼号" style="width:200px"/><br>
-            <Input v-model="addInfo.room_name" placeholder="请输入访问房间号" style="width:200px"/><br>
-            <Input v-model="addInfo.reason" placeholder="请输入访问理由" style="width:200px"/><br>
+            <Input v-model="addInfo.idno" placeholder="请输入身份证号" style="width:200px;margin:5px"/><br>
+            <Select v-model="addInfo.dorm_id" style="width:200px;margin:5px" placeholder="请选择楼号" @on-change="dormSelected">
+                <Option v-for="item in dormList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select><br>
+            <Select v-model="addInfo.room_id" style="width:200px;margin:5px" :disabled=roomDisable placeholder="请选择房间">
+                <Option v-for="item in roomList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select><br>
+            <Input v-model="addInfo.reason" placeholder="请输入访问理由" type="textarea" style="width:200px;margin:5px"/><br>
         </Modal>
-        <Button type="primary" style="align:left;margin-bottom:15px;" @click="addModal5 = true">新增访客</Button>
+        <Button type="primary" style="align:left;margin-bottom:15px;" @click="addVisitor">新增访客</Button>
         <Table :columns="columns1" :data="data1"></Table>
     </div>
 </template>
@@ -35,14 +39,49 @@
             })
         },
         methods: {
+            dormSelected(){
+                this.roomDisable = true
+                this.roomList.length = 0
+                this.$axios.get('http://localhost:3000/room/getByDormId/'+this.addInfo.dorm_id).then(r=>{
+                    console.log(r.data)
+                    if(r.data.message === 'success'){
+                        let data = r.data.data
+                        data.forEach(e=>{
+                            this.roomList.push({label:e.name,value:e.id})
+                        })
+                        this.roomDisable = false
+                    }
+                    else if(r.data.message === 'empty'){
+                        this.$Message.error('这栋楼没有房间')
+                    }
+                    else{
+                        this.$Message.error('未知错误')
+                    }
+                })
+            },
+            addVisitor(){
+                this.addModal5 = true
+                this.roomList.length = 0
+                this.dormList.length = 0
+                this.$axios.get('http://localhost:3000/dorm/getAll').then(r=>{
+                    if(r.data.message === 'success'){
+                        let data = r.data.data
+                        data.forEach(e=>{
+                            this.dormList.push({label:e.id+'号楼',value:e.id})
+                        })
+                        this.addModal3 = true
+                    }
+                })
+            },
             submit(){
                 this.$axios.post('http://localhost:3000/visitor/add',{
                     name:this.addInfo.name,
                     gender:this.addInfo.gender,
                     idno:this.addInfo.idno,
                     dorm_id:this.addInfo.dorm_id,
-                    room_name:this.addInfo.room_name,
-                    reason:this.addInfo.reason
+                    room_id:this.addInfo.room_id,
+                    reason:this.addInfo.reason,
+                    status:0
                 }).then(r=>{
                     console.log(r.data)
                     if(r.data === 'success'){
@@ -55,6 +94,9 @@
         },
         data () {
             return {
+                dormList:[],
+                roomList:[],
+                roomDisable:true,
                 genderList: [
                     {
                         value: 0,
@@ -70,7 +112,7 @@
                     gender:null,
                     idno:null,
                     dorm_id:null,
-                    room_name:null,
+                    room_id:null,
                     reason:null
                 },
                 addModal5:false,

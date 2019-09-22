@@ -11,7 +11,7 @@
  Target Server Version : 50724
  File Encoding         : 65001
 
- Date: 22/09/2019 00:24:22
+ Date: 22/09/2019 23:40:54
 */
 
 SET NAMES utf8mb4;
@@ -27,14 +27,7 @@ CREATE TABLE `admin` (
   `gender` tinyint(1) NOT NULL,
   `tel` bigint(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of admin
--- ----------------------------
-BEGIN;
-INSERT INTO `admin` VALUES (1, '张三', 0, 13808080808);
-COMMIT;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for dorm
@@ -46,18 +39,9 @@ CREATE TABLE `dorm` (
   `type` tinyint(1) DEFAULT NULL COMMENT '0为本科生 1为研究生',
   `admin_id` tinyint(5) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `admin_id` (`admin_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of dorm
--- ----------------------------
-BEGIN;
-INSERT INTO `dorm` VALUES (1, 20, 0, 1);
-INSERT INTO `dorm` VALUES (2, 12, 1, 1);
-INSERT INTO `dorm` VALUES (3, 123, 0, 1);
-INSERT INTO `dorm` VALUES (4, 123123, 0, 1);
-COMMIT;
+  KEY `admin_id` (`admin_id`),
+  CONSTRAINT `dorm_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for maintain
@@ -72,15 +56,10 @@ CREATE TABLE `maintain` (
   `status` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `dorm_id` (`dorm_id`),
-  KEY `room_id` (`room_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of maintain
--- ----------------------------
-BEGIN;
-INSERT INTO `maintain` VALUES (1, 1, 1, 0, '厕所堵住了', 0);
-COMMIT;
+  KEY `room_id` (`room_id`),
+  CONSTRAINT `maintain_ibfk_1` FOREIGN KEY (`dorm_id`) REFERENCES `dorm` (`id`),
+  CONSTRAINT `maintain_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for room
@@ -92,15 +71,9 @@ CREATE TABLE `room` (
   `dorm_id` tinyint(5) NOT NULL,
   `name` varchar(4) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `dorm_id` (`dorm_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of room
--- ----------------------------
-BEGIN;
-INSERT INTO `room` VALUES (1, 6, 1, 'S217');
-COMMIT;
+  KEY `dorm_id` (`dorm_id`),
+  CONSTRAINT `room_ibfk_1` FOREIGN KEY (`dorm_id`) REFERENCES `dorm` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for student
@@ -114,15 +87,10 @@ CREATE TABLE `student` (
   `room_id` tinyint(5) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `dorm_id` (`dorm_id`),
-  KEY `room_id` (`room_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2010002 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of student
--- ----------------------------
-BEGIN;
-INSERT INTO `student` VALUES (2010001, '刘扬帆', 1, 1, 1);
-COMMIT;
+  KEY `room_id` (`room_id`),
+  CONSTRAINT `student_ibfk_1` FOREIGN KEY (`dorm_id`) REFERENCES `dorm` (`id`),
+  CONSTRAINT `student_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20160101 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for visitor
@@ -136,15 +104,12 @@ CREATE TABLE `visitor` (
   `room_id` tinyint(5) NOT NULL,
   `reason` varchar(100) NOT NULL,
   `status` tinyint(1) NOT NULL,
-  `id` tinyint(5) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of visitor
--- ----------------------------
-BEGIN;
-INSERT INTO `visitor` VALUES ('林美美', 1, 510302199302100021, 1, 1, '找朋友', 0, 1);
-COMMIT;
+  `id` tinyint(5) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `dorm_id` (`dorm_id`),
+  KEY `room_id` (`room_id`),
+  CONSTRAINT `visitor_ibfk_1` FOREIGN KEY (`dorm_id`) REFERENCES `dorm` (`id`),
+  CONSTRAINT `visitor_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 1;
