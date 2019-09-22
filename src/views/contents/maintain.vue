@@ -1,6 +1,18 @@
 <template>
     <div align="left">
-        <Button type="primary" style="align:left;margin-bottom:15px;">维修申报</Button>
+        <Modal
+            v-model="addModal4"
+            title="维护申报"
+            @on-ok="submit"
+            @on-cancel="addModal4 = false"
+            align="center">
+            <Input v-model="addInfo.id" placeholder="请输入房间ID" style="width:200px"/><br>
+            <Input v-model="addInfo.dorm_id" placeholder="请输入楼号" style="width:200px"/><br>
+            <Input v-model="addInfo.name" placeholder="请输入房间号" style="width:200px"/><br>
+            <Input v-model="addInfo.type" placeholder="请输入维修类型" style="width:200px"/><br>
+            <Input v-model="addInfo.detail" placeholder="请输入维修内容" style="width:200px"/><br>
+        </Modal>
+        <Button type="primary" style="align:left;margin-bottom:15px;" @click="addModal4 = true">维修申报</Button>
         <Table :columns="columns1" :data="data1"></Table>
     </div>
 </template>
@@ -20,8 +32,21 @@
                 }
             })
         },
+        methods: {
+            submit(){
+                
+            }
+        },
         data () {
             return {
+                addInfo:{
+                    id:null,
+                    dorm_id:null,
+                    name:null,
+                    type:null,
+                    detail:null
+                },
+                addModal4:false,
                 columns1: [
                     {
                         title:'维修ID',
