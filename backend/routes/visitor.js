@@ -37,7 +37,11 @@ router.get('/getAll',async(ctx,next)=>{
     })
     ctx.body = back
   })
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 79af7fc8a5625eb8936f4013ecca92d380a79f15
   router.post('/changeStatus',async(ctx,next)=>{
     let req = ctx.request.body
     let back = 'fail'
