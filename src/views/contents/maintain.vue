@@ -74,6 +74,10 @@
                 })
             },
             submit(){
+                if(this.addInfo.type === null || this.addInfo.detail === null || this.addInfo.dorm_id === null || this.addInfo.room_id === null || this.roomDisable === true){
+                    this.$Message.error('请填写完整信息')
+                    return
+                }
                 this.$axios.post('http://localhost:3000/maintain/add',{
                     dorm_id:this.addInfo.dorm_id,
                     room_id:this.addInfo.room_id,

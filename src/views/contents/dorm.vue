@@ -46,6 +46,10 @@
         },
         methods: {
             submit(){
+                if(this.addInfo.room === null || this.addInfo.admin_id === 0){
+                    this.$Message.error('请填写完整信息')
+                    return
+                }
                 this.$axios.post('http://localhost:3000/dorm/add',{
                     room:this.addInfo.room,
                     type:this.addInfo.type,
@@ -90,6 +94,10 @@
                     {
                         title:'公寓类型',
                         key:'type',
+                    },
+                    {
+                        title:'学生人数',
+                        key:'student_num'
                     },
                     {
                         title:'管理员',

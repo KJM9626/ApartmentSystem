@@ -44,6 +44,10 @@
                 })
             },
             submit(){
+                if(this.addInfo.name === null || this.addInfo.dorm_id === null || this.addInfo.max === null){
+                    this.$Message.error('请填写完整信息')
+                    return
+                }
                 this.$axios.post('http://localhost:3000/room/add',{
                     name:this.addInfo.name,
                     dorm_id:this.addInfo.dorm_id,
@@ -99,6 +103,10 @@
                     {
                         title: '最大容纳数量',
                         key: 'max'
+                    },
+                    {
+                        title:'已入住学生',
+                        key:'student_num'
                     },
                     {
                         title:'操作',

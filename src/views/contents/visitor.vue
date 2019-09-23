@@ -74,6 +74,10 @@
                 })
             },
             submit(){
+                if(this.addInfo.name === null || this.addInfo.gender === null || this.addInfo.idno === null || this.addInfo.reason === null ||this.addInfo.dorm_id === null || this.addInfo.room_id === null || this.roomDisable === true){
+                    this.$Message.error('请填写完整信息')
+                    return
+                }
                 this.$axios.post('http://localhost:3000/visitor/add',{
                     name:this.addInfo.name,
                     gender:this.addInfo.gender,

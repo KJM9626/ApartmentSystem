@@ -9,7 +9,7 @@ router.get('/getAll',async(ctx,next)=>{
     data:[]
   }
   await knex('room')
-  .select('id','max','name','dorm_id').then(e=>{
+  .select('id','max','name','dorm_id','student_num').then(e=>{
     if(e.length === 0){
       back.message = 'empty'
     }

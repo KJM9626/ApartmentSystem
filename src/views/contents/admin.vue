@@ -32,8 +32,11 @@
         },
         methods: {
             submit(){
+                if(this.addInfo.name === null || this.addInfo.tel === null || this.addInfo.gender === null){
+                    this.$Message.error('请填写完整信息')
+                    return
+                }
                 this.$axios.post('http://localhost:3000/admin/add',{
-                    id:this.addInfo.id,
                     name:this.addInfo.name,
                     gender:this.addInfo.gender,
                     tel:this.addInfo.tel
@@ -60,7 +63,6 @@
                     }
                 ],
                 addInfo:{
-                    id:null,
                     name:null,
                     gender:null,
                     tel:null

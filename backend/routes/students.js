@@ -25,6 +25,17 @@ router.get('/getAll',async(ctx,next)=>{
 router.post('/add',async(ctx,next)=>{
   let req = ctx.request.body // req: name,gender,dorm_id,room_id
   let back = 'fail'
+  let currentNum = 0
+  let max = 0
+  await knex('room').select('max','student_num').where('id',req.room_id).then(e=>{
+    currentNum = e[0].student_num
+    max = e[0].max
+  })
+  if(currentNum === max){
+    back = 'full'
+    ctx.body = back
+    return
+  }
   await knex('student').insert({
     name:req.name,
     gender:req.gender,

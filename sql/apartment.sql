@@ -11,7 +11,7 @@
  Target Server Version : 50724
  File Encoding         : 65001
 
- Date: 22/09/2019 23:40:54
+ Date: 23/09/2019 11:26:30
 */
 
 SET NAMES utf8mb4;
@@ -27,7 +27,7 @@ CREATE TABLE `admin` (
   `gender` tinyint(1) NOT NULL,
   `tel` bigint(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for dorm
@@ -38,10 +38,11 @@ CREATE TABLE `dorm` (
   `room` int(3) NOT NULL,
   `type` tinyint(1) DEFAULT NULL COMMENT '0为本科生 1为研究生',
   `admin_id` tinyint(5) NOT NULL,
+  `student_num` int(5) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `admin_id` (`admin_id`),
   CONSTRAINT `dorm_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for maintain
@@ -59,7 +60,7 @@ CREATE TABLE `maintain` (
   KEY `room_id` (`room_id`),
   CONSTRAINT `maintain_ibfk_1` FOREIGN KEY (`dorm_id`) REFERENCES `dorm` (`id`),
   CONSTRAINT `maintain_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for room
@@ -70,10 +71,11 @@ CREATE TABLE `room` (
   `max` int(2) NOT NULL,
   `dorm_id` tinyint(5) NOT NULL,
   `name` varchar(4) NOT NULL,
+  `student_num` int(5) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `dorm_id` (`dorm_id`),
   CONSTRAINT `room_ibfk_1` FOREIGN KEY (`dorm_id`) REFERENCES `dorm` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for student
@@ -90,7 +92,7 @@ CREATE TABLE `student` (
   KEY `room_id` (`room_id`),
   CONSTRAINT `student_ibfk_1` FOREIGN KEY (`dorm_id`) REFERENCES `dorm` (`id`),
   CONSTRAINT `student_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20160101 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for visitor
@@ -110,6 +112,30 @@ CREATE TABLE `visitor` (
   KEY `room_id` (`room_id`),
   CONSTRAINT `visitor_ibfk_1` FOREIGN KEY (`dorm_id`) REFERENCES `dorm` (`id`),
   CONSTRAINT `visitor_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Triggers structure for table student
+-- ----------------------------
+DROP TRIGGER IF EXISTS `student_add`;
+delimiter ;;
+CREATE TRIGGER `student_add` AFTER INSERT ON `student` FOR EACH ROW BEGIN
+UPDATE dorm set dorm.student_num = dorm.student_num + 1 where dorm.id = new.dorm_id;
+UPDATE room set room.student_num = room.student_num + 1 where room.id = new.room_id;
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Triggers structure for table student
+-- ----------------------------
+DROP TRIGGER IF EXISTS `student_delete`;
+delimiter ;;
+CREATE TRIGGER `student_delete` AFTER DELETE ON `student` FOR EACH ROW BEGIN
+UPDATE dorm set dorm.student_num = dorm.student_num - 1 where dorm.id = old.dorm_id;
+UPDATE room set room.student_num = room.student_num - 1 where room.id = old.room_id;
+END
+;;
+delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;
